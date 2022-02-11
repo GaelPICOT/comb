@@ -1,8 +1,8 @@
 <?php
 interface Combination {
-    public function compare($value): int;
+    public function compare(Combination $value): int;
     public function getWinningScore(): int;
-    public function extractValue($sourceDict);
+    public function createFromDict($sourceDict);
 }
 
 trait NumericalCombination {
@@ -41,32 +41,32 @@ class IntCombination implements Combination {
         if($value==NULL) {
             $this->value = rand(0, ($base**$elementNumber)-1);
         } else {
-            $this->value = rand($value);
+            $this->value = $value;
         }
         
     }
 
-    private function getDigit($number, $digitNumber) {
-        return intdiv($number, $this->base ** $digitNumber) % $this->base;
+    private function getDigit($digitNumber) {
+        return intdiv($this->value, $this->base ** $digitNumber) % $this->base;
     }
 
-    public function compare($value): int {
+    public function compare(Combination $other): int {
         $score = 0;
         for($i=0; $i<$this->elementNumber; $i++) {
-            if($this->getDigit($value, $i) == $this->getDigit($this->value, $i)) {
+            if($other->getDigit($i) == $this->getDigit($i)) {
                 $score += 1;
             }
         }
         return $score;
     }
-
-    public function extractValue($sourceDict) {
+    
+    public function createFromDict($sourceDict) {
         $i=0;
         $value = 0;
         while (array_key_exists("value".$i, $sourceDict)) {
             $value += $sourceDict["value".$i] * $this->base**$i;
             $i++;
         }
-        return $value;
+        return new IntCombination($this->elementNumber, $this->base, $value);
     }
 }

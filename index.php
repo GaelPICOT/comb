@@ -25,7 +25,7 @@ else:
         $_SESSION['secretCombination'] = serialize($secretCombination);
     } else {
         $secretCombination = unserialize($_SESSION['secretCombination']);
-        $guess = $secretCombination->extractValue($_POST);
+        $guess = $secretCombination->createFromDict($_POST);
         $score = $secretCombination->compare($guess);
     }
 
@@ -47,7 +47,7 @@ else:
         ?>
         <div>
             <label for="value<?= $i ?>">Valeur <?= $i+1 ?>:</label>
-            <input type="number" name="value<?= $i ?>" value="<?= $_POST["value".$i]?$_POST["value".$i]:0 ?>" id="value<?= $i ?>" min="0" max="<?= $secretCombination->getBase()-1 ?>">
+            <input type="number" name="value<?= $i ?>" value="<?= $_POST["value".$i]??0 ?>" id="value<?= $i ?>" min="0" max="<?= $secretCombination->getBase()-1 ?>">
         </div>
         <?php endfor; ?>
     <button type="submit">tester</button>
